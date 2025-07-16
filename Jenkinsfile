@@ -40,7 +40,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'nexuscred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'Him_Nexus', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh '''
                         set -e
 
