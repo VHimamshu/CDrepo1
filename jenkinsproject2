@@ -43,7 +43,7 @@ pipeline {
                 sh '''
                     ls -ltrh
                     echo "Building docker image with tag: $Num"
-                    docker build -t $IMAGE_NAME:$Num .
+                    docker build -t $IMAGE_NAME:$DATE .
                 '''
             }
         }
@@ -53,7 +53,7 @@ pipeline {
                 sh '''
                     echo "Pushing docker image: $IMAGE_NAME:$Num"
                     echo 'Amma@1234' | docker login -u himamshu5904 --password-stdin
-                    docker push $IMAGE_NAME:$Num
+                    docker push $IMAGE_NAME:$DATE
                 '''
             }
         }
