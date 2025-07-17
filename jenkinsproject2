@@ -8,7 +8,7 @@ pipeline {
     environment {
         //Save numbers for docker images as tags (e.g., 2025-07-15_1932)
         DATE = "${new Date().format('yyyy-MM-dd_HHmm', TimeZone.getTimeZone('IST'))}"
-        IMAGE_NAME = "himamshu5904/ciproject2/JenkinsPipeProject2"
+        IMAGE_NAME = "himamshu5904/ciproject2/jenkinspipeproject2"
 	
     }
 
