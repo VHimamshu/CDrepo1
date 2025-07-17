@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'maven'
+    }
+
+    environment {
+        //Save numbers for docker images as tags (e.g., 2025-07-15_1932)
+        DATE = "${new Date().format('yyyy-MM-dd_HHmm', TimeZone.getTimeZone('IST'))}"
+        IMAGE_NAME = "JenkinsPipeProject2"
+	
+    }
+
+    stages {
+
+        stage('Unit Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Publish Results') {
+            steps {
+                junit 'target/surefire-reports/*.xml'
+            }
+        }
+
+        stage('Package the Code') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Upload to Artifact') {
+            steps {
+                sh 'mvn clean deploy -s settings.xml'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                    ls -ltrh
+                    echo "Building docker image with tag: $Num"
+                    docker build -t $IMAGE_NAME:$Num .
+                '''
+            }
+        }
+
+        stage('Push Docker Image to AR') {
+            steps {
+                sh '''
+                    echo "Pushing docker image: $IMAGE_NAME:$Num"
+                    echo 'Amma@1234' | docker login -u himamshu5904 --password-stdin
+                    docker push $IMAGE_NAME:$Num
+                '''
+            }
+        }
+    }
+}
+
