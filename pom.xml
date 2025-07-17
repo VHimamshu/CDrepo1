@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.example</groupId>
 	<artifactId>java-kubernetes</artifactId>
-	<version>1.1.1</version>
+	<version>1.1.2</version>
 	<packaging>jar</packaging>
 	<name>demo</name>
 	<description>Demo project for Spring Boot</description>
@@ -60,11 +60,11 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>nexus.snapshot</id>
-			<url>http://34.93.142.175:8081/repository/maven-snapshots/</url>
+			<url>http://34.93.142.175:8081/repository/mvnpipe2snapshot/</url>
 		</snapshotRepository>
 		<repository>
 			<id>nexus.release</id>
-			<url>http://34.93.142.175:8081/repository/mvnpipe1release/</url>
+			<url>http://34.93.142.175:8081/repository/mvnpipe2release/</url>
 		</repository>
 	</distributionManagement>
 	<build>
