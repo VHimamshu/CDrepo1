@@ -64,7 +64,7 @@
 		</snapshotRepository>
 		<repository>
 			<id>nexus.release</id>
-			<url>http://34.93.142.175:8081/repository/mvnpipe2release/</url>
+			<url>http://34.93.142.175:8081/repository/mvnpipe2promrelease//</url>
 		</repository>
 	</distributionManagement>
 	<build>
