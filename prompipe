@@ -3,7 +3,7 @@ pipeline {
     agent { label 'JENKINSAGENT' }
 
     environment {
-        JAR_NAME     = "java-kubernetes-1.0.0.jar"
+        JAR_NAME     = "java-kubernetes-1.1.2.jar"
         TARGET_DIR   = "/opt/myapp"
         SERVICE_NAME = "myapp"
         BACKUP_DATE  = "${new Date().format('yyyy-MM-dd_HHmm', TimeZone.getTimeZone('IST'))}"
