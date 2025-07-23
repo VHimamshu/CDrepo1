@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'Jenkins1' }
+    agent { label 'JENKINSAGENT' }
 
     environment {
         JAR_NAME     = "java-kubernetes-1.1.2.jar"
