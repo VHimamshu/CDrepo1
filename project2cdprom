@@ -1,55 +1,45 @@
 pipeline {
-    agent { label 'JENKINSAGENT' }
+    agent any
 
     environment {
-        JAR_NAME     = "java-kubernetes-1.1.2.jar"
-        TARGET_DIR   = "/opt/myapp"
-        SERVICE_NAME = "myapp"
-        BACKUP_DATE  = "${new Date().format('yyyy-MM-dd_HHmm', TimeZone.getTimeZone('IST'))}"
+        IMAGE_NAME = "himamshu5904/ciproject2"
+        IMAGE_TAG = "2025-07-21_2002"
+        CONTAINER_NAME = "Himamshu/project2CDPROM"    
     }
 
     stages {
-        stage('Download Artifact') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'Him_Nexus', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh '''
-                        set -e
-
-                        echo "==> Checking if old JAR exists for backup"
-                        if sudo test -f "$TARGET_DIR/$JAR_NAME"; then
-                            echo "==> Backing up existing JAR"
-                            sudo mv "$TARGET_DIR/$JAR_NAME" "$TARGET_DIR/${JAR_NAME%.jar}_$BACKUP_DATE.jar"
-                        fi
-
-                        echo "==> Downloading new JAR from Nexus"
-                        curl -u $USERNAME:$PASSWORD "http://34.93.142.175:8081/repository/mvnpipe2promrelease/com/example/java-kubernetes/1.1.2/$JAR_NAME" --output $JAR_NAME
-                    '''
-                }
-            }
-        }
-
-        stage('Deploy App') {
+        stage ( "Pull docker image from hub") {
             steps {
                 sh '''
-                    set -e
-
-                    echo "==> Creating target directory if it doesn't exist"
-                    sudo mkdir -p $TARGET_DIR
-
-                    echo "==> Copying new JAR to $TARGET_DIR"
-                    sudo cp $JAR_NAME $TARGET_DIR/
-
-                    echo "==> Updating ownership"
-                    sudo chown jenkins:jenkins $TARGET_DIR/$JAR_NAME
-
-                    echo "==> Restarting systemd service: $SERVICE_NAME"
-                    sudo systemctl daemon-reload
-                    sudo systemctl restart $SERVICE_NAME
-
-                    echo "==> Verifying service status"
-                    sudo systemctl status $SERVICE_NAME --no-pager
+                echo "Pulling the docker image"
+                docker pull $IMAGE_NAME:$IMAGE_TAG
                 '''
             }
+        }
+        stage ("Run the image") {
+            steps {
+                sh '''
+
+                echo "Stop the cont$ainer if exists already"
+                docker stop $CONTAINER_NAME || true
+
+                echo "Removing the container"
+                docker rm $CONTAINER_NAME || true
+
+                echo "Container creation"
+                docker run -d --name $CONTAINER_NAME -p 8086:8085  $IMAGE_NAME:$IMAGE_TAG
+                ''' 
+            }
+        }
+    }
+
+    post {
+        success {
+             echo "Deployment completed"
+
+        }
+        failure {
+            echo "Deployment failed"
         }
     }
 }
