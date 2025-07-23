@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "himamshu5904/ciproject2"
         IMAGE_TAG = "2025-07-21_2002"
-        CONTAINER_NAME = "Himamshu/project2CDPROM"    
+        CONTAINER_NAME = "Himamshuproject2CDPROM"    
     }
 
     stages {
