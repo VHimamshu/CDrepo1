@@ -1,8 +1,5 @@
 pipeline {
     agent { label 'Jenkins1' }
-
-    tools {
-        maven 'maven'
     }
 
     environment {
@@ -12,51 +9,6 @@ pipeline {
         SERVICE_NAME = "myapp"
         BACKUP_DATE  = "${new Date().format('yyyy-MM-dd_HHmm', TimeZone.getTimeZone('IST'))}"
     }
-
-    stages {
-        
-        stage('Unit Test') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-
-        stage('Publish Results') {
-            steps {
-                junit 'target/surefire-reports/*.xml'
-            }
-        }
-
-        stage('Package the Code') {
-            steps {
-                sh 'mvn clean package'
-            }
-        }
-
-        stage('Upload to Artifact') {
-            steps {
-                sh 'mvn clean deploy -s settings.xml'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh '''
-                    ls -ltrh
-                    echo "Building docker image with tag: $Num"
-                    docker build -t $IMAGE_NAME:$DATE .
-                '''
-            }
-        }
-
-        stage('Push Docker Image to AR') {
-            steps {
-                sh '''
-                    echo "Pushing docker image: $IMAGE_NAME:$Num"
-                    echo 'Amma@1234' | docker login -u himamshu5904 --password-stdin
-                    docker push $IMAGE_NAME:$DATE
-            }
-        }
 
          stage('Download Artifact') {
             steps {
