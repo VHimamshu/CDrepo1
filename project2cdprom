@@ -1,16 +1,15 @@
 pipeline {
     agent { label 'Jenkins1' }
-    }
 
     environment {
-        environment {
         JAR_NAME     = "java-kubernetes-1.1.2.jar"
         TARGET_DIR   = "/opt/myapp"
         SERVICE_NAME = "myapp"
         BACKUP_DATE  = "${new Date().format('yyyy-MM-dd_HHmm', TimeZone.getTimeZone('IST'))}"
     }
 
-         stage('Download Artifact') {
+    stages {
+        stage('Download Artifact') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'Him_Nexus', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh '''
@@ -27,30 +26,30 @@ pipeline {
                     '''
                 }
             }
-
         }
-         stage('Deploy App') {
-          steps {
-            sh '''
-              set -e
-              echo "==> Creating target directory if it doesn't exist"
-              sudo mkdir -p $TARGET_DIR
 
-              echo "==> Copying new JAR to $TARGET_DIR"
-              sudo cp $JAR_NAME $TARGET_DIR/
+        stage('Deploy App') {
+            steps {
+                sh '''
+                    set -e
 
-              echo "==> Updating ownership"
-              sudo chown jenkins:jenkins $TARGET_DIR/$JAR_NAME
+                    echo "==> Creating target directory if it doesn't exist"
+                    sudo mkdir -p $TARGET_DIR
 
-              echo "==> Restarting systemd service: $SERVICE_NAME"
-              sudo systemctl daemon-reload
-              sudo systemctl restart $SERVICE_NAME
+                    echo "==> Copying new JAR to $TARGET_DIR"
+                    sudo cp $JAR_NAME $TARGET_DIR/
 
-              echo "==> Verifying service status"
-              sudo systemctl status $SERVICE_NAME --no-pager
+                    echo "==> Updating ownership"
+                    sudo chown jenkins:jenkins $TARGET_DIR/$JAR_NAME
 
+                    echo "==> Restarting systemd service: $SERVICE_NAME"
+                    sudo systemctl daemon-reload
+                    sudo systemctl restart $SERVICE_NAME
+
+                    echo "==> Verifying service status"
+                    sudo systemctl status $SERVICE_NAME --no-pager
                 '''
             }
         }
     }
-
+}
