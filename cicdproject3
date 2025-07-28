@@ -65,7 +65,7 @@ pipeline {
             steps {
                 echo "Deploying to Kubernetes Dev cluster..."
 		 kubectl config set-context $CONTEXTNAME
-                 cd /home/himamsuv007/kubapplication
+                 cd /home/himamsuv007
                 sh "kubectl apply -f ${DEPLOYMENT_YAML} --kubeconfig ~/.kube/config"
             }
         }
