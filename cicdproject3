@@ -31,12 +31,6 @@ pipeline {
             }
         }
 
-        stage('Upload Artifact to Nexus') {
-            steps {
-                echo "Uploading JAR to Nexus..."
-                sh 'mvn deploy -s settings.xml'
-            }
-        }
 
         stage('Build and Push Docker Image ') {
             steps {
