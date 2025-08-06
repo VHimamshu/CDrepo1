@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME     = "himamshu5904/ciproject2:2025-07-17_2036"   
+        IMAGE_NAME     = "himamshu5904/ciproject2"   
         IMAGE_TAG      = "${new Date().format('yyyy-MM-dd_HHmm', TimeZone.getTimeZone('IST'))}"
         JAR_NAME       = "java-kubernetes-1.1.2.jar"
         TARGET_DIR     = "/opt/myapp"
