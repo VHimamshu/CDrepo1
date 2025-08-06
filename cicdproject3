@@ -37,34 +37,13 @@ pipeline {
                 script {
                     echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
                     sh """
-                        docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                        docker build -t $IMAGE_NAME:$IMAGE_TAG
                         echo 'Amma@1234' | docker login -u himamshu5904 --password-stdin
-                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                        docker push $IMAGE_NAME:$IMAGE_TAG
                     """
                 }
             }
         }
-
-        stage('Update Deployment YAML') {
-            steps {
-                echo "Updating image in deployment.yaml"
-                sh """
-                    sed -i 's|image: .*|image: ${IMAGE_NAME}:${IMAGE_TAG}|' ${DEPLOYMENT_YAML}
-                    cat ${DEPLOYMENT_YAML}
-                """
-            }
-        }
- 
-        stage('Deploy to Kubernetes (Dev)') {
-            steps {
-                echo "Deploying to Kubernetes Dev cluster..."
-                sh """
-                  kubectl config set-context ${CONTEXTNAME}
-                  cd /home/himamsuv007
-                  kubectl apply -f ${DEPLOYMENT_YAML} --kubeconfig ~/.kube/config
-                """
-    }
-}
 
     }
 
