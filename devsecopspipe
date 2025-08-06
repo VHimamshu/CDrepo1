@@ -15,18 +15,26 @@ pipeline {
         stage('SAST') {
             steps {
                 sh '''
-                    mvn clean verify sonar:sonar -Dsonar.projectKey=mavenInt  -Dsonar.projectName='mavenInt  -Dsonar.host.url=http://34.93.170.203/sonar  -Dsonar.token=sqp_02df09424bc6e704f57d6ed9b98d75b5c43f0742
-                   '''
+                    mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=mavenInt \
+                    -Dsonar.projectName=mavenInt \
+                    -Dsonar.host.url=http://34.93.170.203/sonar \
+                    -Dsonar.token=sqp_02df09424bc6e704f57d6ed9b98d75b5c43f0742
+                '''
             }
         }
 
         stage('SCA') {
             steps {
                 sh '''
-                trivy fs  --format template --template "@html.tpl" -o report-sca.html .
+                    trivy fs \
+                    --format template \
+                    --template "@html.tpl" \
+                    -o report-sca.html .
                 '''
             }
         }
+
         stage('Publish Trivy SCA Report') {
             steps {
                 publishHTML([
@@ -43,7 +51,7 @@ pipeline {
 
         stage('Unit Tests') {
             steps {
-                sh "mvn clean test"
+                sh 'mvn clean test'
             }
         }
 
@@ -55,16 +63,16 @@ pipeline {
 
         stage('Package') {
             steps {
-                sh "mvn clean package"
+                sh 'mvn clean package'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 sh '''
-                echo "Building Docker image with tag: $DATE"
-                ls -ltrh
-                docker build -t $IMAGE_NAME:$DATE .
+                    echo "Building Docker image with tag: $DATE"
+                    ls -ltrh
+                    docker build -t $IMAGE_NAME:$DATE .
                 '''
             }
         }
@@ -72,26 +80,30 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 sh '''
-                echo "Pushing Docker image: $IMAGE_NAME:$DATE"
-                echo "Amma@1234" | docker login -u himamshu5904 --password-stdin
-                docker push $IMAGE_NAME:$DATE
-                '''
-            }
-        }
-        stage('Trivy SCA Scan') {
-            steps {
-                sh '''
-                trivy config --format template --template "@html.tpl" -o report-iac.html .
+                    echo "Pushing Docker image: $IMAGE_NAME:$DATE"
+                    echo "Amma@1234" | docker login -u himamshu5904 --password-stdin
+                    docker push $IMAGE_NAME:$DATE
                 '''
             }
         }
 
-        stage('Publish Trivy IAC Report') {
+        stage('Trivy IaC Scan') {
+            steps {
+                sh '''
+                    trivy config \
+                    --format template \
+                    --template "@html.tpl" \
+                    -o report-iac.html .
+                '''
+            }
+        }
+
+        stage('Publish Trivy IaC Report') {
             steps {
                 publishHTML([
                     reportDir: '.',
                     reportFiles: 'report-iac.html',
-                    reportName: 'Trivy SCA Vulnerability Report',
+                    reportName: 'Trivy IaC Vulnerability Report',
                     reportTitles: 'Trivy HTML Report',
                     keepAll: true,
                     alwaysLinkToLastBuild: true,
@@ -103,7 +115,10 @@ pipeline {
         stage('Trivy Image Scan') {
             steps {
                 sh '''
-                trivy image --format template --template "@html.tpl" -o report-docker.html $IMAGE_NAME:$DATE
+                    trivy image \
+                    --format template \
+                    --template "@html.tpl" \
+                    -o report-docker.html $IMAGE_NAME:$DATE
                 '''
             }
         }
